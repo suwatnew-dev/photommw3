@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MMWPhoto - คลังภาพกิจกรรมโรงเรียนเมืองมุกวิทยาคม</title>
+    
+    <!-- External Libraries -->
+    <script src="[https://cdn.jsdelivr.net/npm/sweetalert2@11](https://cdn.jsdelivr.net/npm/sweetalert2@11)"></script>
+    <link href="[https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css](https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css)" rel="stylesheet">
+    <link href="[https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap](https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap)" rel="stylesheet">
+    <link rel="icon" type="image/png" href="[https://lh3.googleusercontent.com/d/1E5LTJzdt0YxYhgNgt02QknM1525fUOaT](https://lh3.googleusercontent.com/d/1E5LTJzdt0YxYhgNgt02QknM1525fUOaT)">
+
+    <!-- ลิงก์ไฟล์ CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <img src="[https://site.mmw.ac.th/wp-content/uploads/2020/08/logoNew.png](https://site.mmw.ac.th/wp-content/uploads/2020/08/logoNew.png)" alt="โลโก้โรงเรียนเมืองมุกวิทยาคม" class="school-logo">
+                    <div class="logo-text">
+                        <h1>คลังภาพกิจกรรม</h1>
+                        <p>โรงเรียนเมืองมุกวิทยาคม</p>
+                    </div>
+                </div>
+                <div class="auth-buttons">
+                    <button class="btn btn-primary btn-small-header" id="loginBtn">
+                        <i class="fas fa-sign-in-alt"></i>
+                        เข้าสู่ระบบ
+                    </button>
+                    <button class="btn btn-secondary btn-small-header" id="logoutBtn" style="display: none;">
+                        <i class="fas fa-sign-out-alt"></i>
+                        ออกจากระบบ
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Search Section -->
+        <section class="search-section">
+            <div class="search-form">
+                <!-- Wrapper for input and icons -->
+                <div class="search-input-wrapper">
+                    <i class="fas fa-search search-icon-inside"></i>
+                    <input type="text" class="search-input" id="searchInput" placeholder="ค้นหากิจกรรมที่ต้องการ...">
+                    <!-- Clear Button -->
+                    <i class="fas fa-times clear-search-btn" id="clearSearchBtn" title="ล้างค่าค้นหา"></i>
+                </div>
+                <button class="btn btn-primary" id="searchBtn" aria-label="ค้นหา">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+            <div class="filters">
+                <div class="filter-group">
+                    <label>เดือน</label>
+                    <select class="filter-select" id="monthFilter">
+                        <option value="">ทุกเดือน</option>
+                        <option value="01">มกราคม</option>
+                        <option value="02">กุมภาพันธ์</option>
+                        <option value="03">มีนาคม</option>
+                        <option value="04">เมษายน</option>
+                        <option value="05">พฤษภาคม</option>
+                        <option value="06">มิถุนายน</option>
+                        <option value="07">กรกฎาคม</option>
+                        <option value="08">สิงหาคม</option>
+                        <option value="09">กันยายน</option>
+                        <option value="10">ตุลาคม</option>
+                        <option value="11">พฤศจิกายน</option>
+                        <option value="12">ธันวาคม</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>ปี</label>
+                    <select class="filter-select" id="yearFilter">
+                        <option value="">ทุกปี</option>
+                        <option value="2026">2569</option>
+                        <option value="2025">2568</option>
+                        <option value="2024">2567</option>
+                        <option value="2023">2566</option>
+                        <option value="2022">2565</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>แท็ก</label>
+                    <select class="filter-select" id="tagFilter">
+                        <option value="">ทุกแท็ก</option>
+                        <!-- Tags will be populated dynamically from activities -->
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <!-- Loading -->
+        <div class="loading" id="loading">
+            <i class="fas fa-spinner"></i>
+            <p style="margin-top: 15px; color: var(--text-muted); font-weight: 500;">กำลังโหลดข้อมูลกิจกรรม...</p>
+        </div>
+
+        <!-- Activities Section -->
+        <section class="activities-section">
+            <div class="activities-grid" id="activitiesGrid">
+                <!-- Activities will be loaded here -->
+            </div>
+            <div class="pagination" id="pagination">
+                <button id="prevBtn" disabled>
+                    <i class="fas fa-arrow-left"></i>
+                    ก่อนหน้า
+                </button>
+                <div class="page-info" id="pageInfo">หน้า 1 จาก 1</div>
+                <button id="nextBtn" disabled>
+                    ถัดไป
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- Admin Dashboard -->
+        <section class="admin-section" id="adminSection">
+            <div class="admin-header">
+                <h2><i class="fas fa-cog"></i> จัดการกิจกรรม</h2>
+                <button class="btn btn-primary" id="addActivityBtn">
+                    <i class="fas fa-plus"></i>
+                    เพิ่มกิจกรรม
+                </button>
+            </div>
+            
+            <!-- Admin Search & Filter Toolbar -->
+            <div class="admin-toolbar">
+                <div class="admin-search-wrapper">
+                    <i class="fas fa-search"></i>
+                    <input type="text" class="admin-search-input" id="adminSearchInput" placeholder="ค้นหาชื่อกิจกรรม, แท็ก...">
+                </div>
+                <select id="adminStatusFilter" class="admin-filter-select">
+                    <option value="all">สถานะทั้งหมด</option>
+                    <option value="published">เผยแพร่แล้ว</option>
+                    <option value="draft">แบบร่าง</option>
+                </select>
+                 <select id="adminYearFilter" class="admin-filter-select">
+                    <option value="all">ปีทั้งหมด</option>
+                    <!-- Will be populated via JS -->
+                </select>
+            </div>
+
+            <div class="table-container">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 40%;">หัวข้อ</th>
+                            <th style="width: 25%;">วันที่/ข้อมูล</th>
+                            <th style="width: 15%;">สถานะ</th>
+                            <th style="width: 20%;">การจัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminTableBody">
+                        <!-- Admin data will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+            <div style="margin-top: 10px; color: var(--text-muted); font-size: 0.9rem; text-align: right;">
+                รายการทั้งหมด: <span id="adminTotalCount">0</span> รายการ
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            © 2026 MUANGMUKWITTAYAKHOM SCHOOL I SUWAT PHALASUN 
+        </footer>
+    </div>
+
+    <!-- Image Modal -->
+    <div class="modal" id="imageModal">
+        <div class="modal-content">
+            <span class="modal-close" id="modalClose">
+                <i class="fas fa-times"></i>
+            </span>
+            <div class="zoom-info" id="zoomInfo">100%</div>
+            <img class="modal-image" id="modalImage" src="" alt="">
+            <div class="modal-controls">
+                <button class="modal-control-btn" id="zoomOutBtn" title="ซูมออก">
+                    <i class="fas fa-minus"></i>
+                </button>
+                <button class="modal-control-btn" id="resetZoomBtn" title="รีเซ็ตซูม">
+                    <i class="fas fa-expand"></i>
+                </button>
+                <button class="modal-control-btn" id="zoomInBtn" title="ซูมเข้า">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Activity Detail Modal - Full Screen -->
+    <div class="activity-detail-modal" id="activityModal">
+        <button class="activity-detail-close" id="activityModalClose">
+            <i class="fas fa-times"></i>
+        </button>
+        <div id="activityModalContent">
+            <!-- Activity details will be loaded here -->
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="login-section" id="loginSection">
+        <div class="login-form">
+            <h2>
+                <i class="fas fa-user-shield" style="margin-right: 8px;"></i>
+                เข้าสู่ระบบผู้ดูแล
+            </h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label>ชื่อผู้ใช้</label>
+                    <input type="text" class="form-input" id="username" required>
+                </div>
+                <div class="form-group">
+                    <label>รหัสผ่าน</label>
+                    <div style="position: relative;">
+                        <input type="password" class="form-input" id="password" required style="padding-right: 45px;">
+                        <button type="button" id="togglePassword" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1rem; padding: 0; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <button type="submit" class="btn btn-primary" style="flex: 1; justify-content: center;">
+                        <i class="fas fa-sign-in-alt"></i>
+                        เข้าสู่ระบบ
+                    </button>
+                    <button type="button" class="btn btn-secondary" id="cancelLogin" style="flex: 1; justify-content: center;">
+                        ยกเลิก
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ลิงก์ไฟล์ JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>
